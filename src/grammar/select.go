@@ -1,8 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
-func fibonacci(c, quit chan int) {
+func fibonacci3(c, quit chan int) {
 	x, y := 1, 1
 	for {
 		select {
@@ -11,6 +14,9 @@ func fibonacci(c, quit chan int) {
 		case <-quit:
 			fmt.Println("quit")
 			return
+		case <-time.After(5 * time.Second):
+			println("timeout")
+			break
 		default:
 			fmt.Println("blocking...")
 		}
@@ -26,5 +32,5 @@ func main() {
 		}
 		quit <- 0
 	}()
-	fibonacci(c, quit)
+	fibonacci3(c, quit)
 }
