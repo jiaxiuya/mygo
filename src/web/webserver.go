@@ -34,9 +34,16 @@ func login(w http.ResponseWriter, r *http.Request) {
 		username := r.Form.Get("username")
 		password := r.Form.Get("password")
 		if username == "" || password == "" {
-			w.Write([]byte("username or password is error"));
+			// 正常转义输出的内容
+			//template.HTMLEscape(w, []byte("username or password is error"))
+			// 输入转义的内容
+			t, _ := template.New("foo").Parse(`{{define "T"}}Hello, {{.}}!{{end}}`)
+			t.ExecuteTemplate(w, "T", "<script>alert('you have been pwned')</script>")
 		} else {
-			w.Write([]byte("login success"));
+			//template.HTMLEscape(w, []byte("login success"))
+			// 跳过转义，使用template.Html输出正常的<script>内容
+			t, _ := template.New("foo").Parse(`{{define "T"}}Hello, {{.}}!{{end}}`)
+			t.ExecuteTemplate(w, "T", template.HTML("<script>alert('you have been pwned')</script>"))
 		}
 		// 验证中文
 		/*if m, _ := regexp.MatchString("^\\p{Han}+$", username); !m {
